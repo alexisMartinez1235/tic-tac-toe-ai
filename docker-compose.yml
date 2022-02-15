@@ -20,8 +20,9 @@ services:
     user: worker
     volumes:
       - ./VsCodeConfigFolders/Python:/home/worker/.vscode-server/
-      - ./Python/w:/usr/src/app
-      # - pythonModules:/usr/src/app
+      - ./Python/src:/usr/src/app
+      - ./Python/Install:/opt/venv/
+      # - ./Python/Install:/home/worker/.local/share/virtualenvs/
     # restart: always
     
     working_dir: /usr/src/app

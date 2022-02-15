@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "ms-vscode.test-adapter-converter",
+    "hbenl.vscode-test-explorer",
+    "cweijan.vscode-database-client2",
+    "eamodio.gitlens",
+    "wix.vscode-import-cost",
+    "cweijan.vscode-mysql-client2",
+    "ms-vscode.live-server",
+    "ms-python.vscode-pylance"
+  ]
+}
