@@ -1,0 +1,6 @@
+test = "pytest test --cov=awsume --cov-report term"
+test-html = "pytest test --cov=awsume --cov-report html:coverage/html"
+test-watch = "watchmedo shell-command --patterns='*.py;*.txt' --recursive --command='pipenv run test-html -s'"
+build = "python setup.py sdist"
+deploy = "twine upload dist/*"
+version = "python -c \"from awsume.__data__ import version; print(version)\""

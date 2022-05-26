@@ -16,14 +16,17 @@ init(){
   
   if [[ "$ReCreateInstallation" == "true" ]]; then
     rm -rf ./Python/Installation
+    docker-compose stop
+    docker-compose rm
+    # docker image rm $(docker-compose images python -q)
   fi
 
   mkdir -p ./VsCodeConfigFolders/Python
-  
   # docker-compose -f "docker-compose.yml" -f "docker-compose-dev.yml" up -d --build
   docker-compose -f "docker-compose.yml" up -d --build
+  # docker-compose logs -f
 }
 
-if [[ "true" ]]; then
+if [[ "$1" ]]; then
   init $1
 fi
