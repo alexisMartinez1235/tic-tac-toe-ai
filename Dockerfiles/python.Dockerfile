@@ -14,6 +14,7 @@ FROM python:${python_version} as dev
   RUN adduser -D worker
   RUN apk add --update sudo
   RUN apk add htop
+  RUN apk add --update make cmake gcc g++ gfortran
   
   # RUN touch /etc/sudoers.d/worker
   RUN echo "worker ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/worker \
