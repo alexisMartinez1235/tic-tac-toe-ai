@@ -1,35 +1,58 @@
 version: '3.9'
-services:     
-  python:
+services:
+  
+  kaggle:
+    image: gcr.io/kaggle-images/python
+    working_dir: /kaggle/working
+    volumes:
+      - ./Python:/home/jupyter
+      - ./Kaggle:/kaggle
+      - ./Python/tic-tac-toe.ipynb:/kaggle/working/tic-tac-toe.ipynb:rw
+      - ./VsCodeConfigFolders/kaggle:/home/jupyter/.vscode-server
+    ports:
+      - 8080:8080
+      - 8880:8888
+    
+  jupyter:
+    image: jupyter/datascience-notebook:r-4.0.3
+    # environment:
+    #  - JUPYTER TOKEN=ja89osj4rm8pojdl
+    volumes:
+      - ./Python:/home/jovyan
+    ports:
+      - 8888:8888
+    container_name: jupyter
+    # command: jupyter notebook list
+    
+  python_ai:
+    deploy:
+      resources:
+        limits:
+          memory: 450m
     build:
       args:
         python_version: ${PYTHON_VERSION}
       context: .
       dockerfile: Dockerfiles/python.Dockerfile
       target: ${MODE_PYTHON}
-    container_name: python
-    # command: npm start
-    # environment:
-    #   PYTHONHOME: /opt/venv/bin/
-    #   PYTHONPATH: /usr/src/app/
+    container_name: python_ai
     networks:
-      pythonNet:
+      pythonNetAi:
         aliases:
-          - python
+          - python_ai
+    expose:
+      - 8000
     ports:
-      - 5678:5678
+      - 8000:8000
     user: worker
     volumes:
       - ./VsCodeConfigFolders/Python:/home/worker/.vscode-server/
-      - ./Python:/usr/src/app
-      - pythonInstall:/usr/local/lib/python3.10/:r
+      - ./Python/w:/usr/src/app
+    
     # restart: always
-    working_dir: /usr/src/app
-
+    working_dir: /usr/src/app   
+  
 networks:
-  pythonNet:
+  pythonNetAi:
     driver: bridge
-    name: pythonNet
-
-volumes:
-  pythonInstall:
+    name: pythonNetAi

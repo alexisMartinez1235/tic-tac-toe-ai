@@ -1,0 +1,4 @@
+[core]
+	autocrlf = false
+[credential]
+	helper = "!f() { /home/jovyan/.vscode-server/bin/30d9c6cd9483b2cc586687151bcbcd635f373630/node /tmp/vscode-remote-containers-ae6af229f828d7e2009ad827d4c6f22fc4efcc74.js $*; }; f"

@@ -1,0 +1,22 @@
+{% extends 'ai_core/base.html' %}
+
+{% block title %}
+  Tic tac toe
+{% endblock %}
+
+{% block content %}
+  <h1>
+    {{ gameData.username }}  vs 
+  </h1>
+  <div>
+    <p>
+      | 0 | 0 | x |
+    </p>
+    <p>
+      |   | x | 0 |
+    </p>
+    <p>
+      |   |   | 0 |
+    </p>
+  </div>
+{% endblock %}

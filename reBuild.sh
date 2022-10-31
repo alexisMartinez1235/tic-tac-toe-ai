@@ -22,10 +22,11 @@ init(){
   fi
 
   mkdir -p ./VsCodeConfigFolders/Python
-  # docker-compose -f "docker-compose.yml" -f "docker-compose-dev.yml" up -d --build
-  docker-compose -f "docker-compose.yml" up -d --build
+  # docker-compose -f "docker-compose.yml" -f "docker-compose-dev.yml" up -d --build 
+  docker-compose -f "docker-compose.yml" up -d --build python_ai
   # docker-compose logs -f
 }
+
 
 if [[ "$1" ]]; then
   init $1

@@ -1,43 +1,53 @@
 ARG python_version
+
 FROM python:${python_version} as dev
+# FROM python:${python_version} as dev
+  ARG USERNAME=worker
+
+  # RUN pip install --upgrade pip
+  # RUN apk add libgcc libstdc++
+  RUN apt-get install -y passwd
   WORKDIR /usr/src/app
-
-  VOLUME ./Python /usr/src/app
-
-  # RUN apk update
-  RUN apk add --virtual gcc
-
-  # app vscode
-  RUN apk add libgcc libstdc++
-
-  ## Create user ##
-  RUN adduser -D worker
-  RUN apk add --update sudo
-  RUN apk add htop
-  RUN apk add --update make cmake gcc g++ gfortran
   
-  # RUN touch /etc/sudoers.d/worker
-  RUN echo "worker ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/worker \
-          && chmod 0440 /etc/sudoers.d/worker
-          
-  RUN chown worker:root -R /home/worker/
-  #################
+  # For install pandas
+  # RUN apk add make automake gcc g++ python3-dev
+  RUN apt-get update && apt-get install -y wget build-essential
 
-  ADD --chown=worker:root ./Python/requirements.txt .
-  RUN chown worker:root -R /usr/src/app
-  # RUN pip install virtualenv
-  # RUN virtualenv -p /usr/bin/python3 venv/ ; . venv/bin/activate
+  # Create the user
+  RUN useradd --group root -m $USERNAME \
+  # RUN adduser -S -D -G root -h /home/$USERNAME -s /bin/sh $USERNAME \
+    #
+    # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
+    # && apk add --update sudo shadow \
+    && apt-get install sudo \  
+    # alpine-zsh-config \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME \
+    && chown $USERNAME:root -R /home/$USERNAME/
+  
+  # install zsh
+  RUN su -c "wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.1.2/zsh-in-docker.sh > zsh-in-docker.sh" - $USERNAME
+  RUN su -c "sh zsh-in-docker.sh -t agnostic" - $USERNAME
+  RUN su -c "rm zsh-in-docker.sh" - $USERNAME
+  
+  RUN touch /home/$USERNAME/.zshrc
+  RUN sed -i '/^ZSH_THEME/c\ZSH_THEME="agnoster"' /home/$USERNAME/.zshrc 
 
-  # RUN python3 -m pip install --upgrade pip
-  # RUN python3 -m pip install --no-cache-dir -r requirements.txt
+  RUN usermod -s /bin/zsh $USERNAME
 
-  RUN python -m venv /opt/venv/
-  RUN chown worker:root -R /opt/venv/
-  RUN /opt/venv/bin/python -m pip install --upgrade pip
-  RUN /opt/venv/bin/pip install --no-cache-dir -r  requirements.txt
+  # ADD --chown=worker:worker Python/requirements.txt .
+  # RUN pip install -r requeriments.txt
 
-  # CMD . /opt/venv/bin/activate && exec /opt/venv/bin/python3 -m debugpy --listen localhost:5678 --wait-for-client main.py
-  # CMD /opt/venv/bin/python -m debugpy --listen localhost:5678 --wait-for-client main.py
-  CMD /opt/venv/bin/python -m debug.py main.py
+  RUN chown $USERNAME:root -R /usr/src/app
+  RUN chown $USERNAME:root -R /home/$USERNAME
+  
+  ADD Python/w/requirements.txt .
 
-# FROM python:${python_version} as prod
+  # RUN npm install -g nodemon
+  RUN pip install -r requirements.txt
+  
+  # CMD pipenv run start ; tail -f /dev/null
+  # CMD pipenv run start; tail -f /dev/null
+  
+  # CMD python manage.py runserver 0.0.0.0:8000 ; tail -f /dev/null
+  CMD tail -f /dev/null
